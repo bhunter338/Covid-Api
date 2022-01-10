@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Covid_Api.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,6 +32,7 @@ namespace Covid_Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Covid_Api", Version = "v1" });
             });
+            services.AddScoped<ICovidDataRepo, CovidDataRepo>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

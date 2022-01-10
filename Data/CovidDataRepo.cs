@@ -6,7 +6,7 @@ namespace Covid_Api.Data
     {
         public TotalData GetDailyTotalData(string country)
         {
-            return new TotalData { TotalConfirmed = 10, TotalRecovered = 20, TotalDeaths = 40 };
+            return new TotalData { Name = country, TotalConfirmed = 10, TotalRecovered = 20, TotalDeaths = 40 };
         }
 
         public TotalData GetTotalData(string country)

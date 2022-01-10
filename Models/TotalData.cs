@@ -2,6 +2,7 @@ namespace Covid_Api.Models
 {
     public class TotalData
     {
+        public string Name { get; set; }
         public int TotalConfirmed { get; set; }
         public int TotalRecovered { get; set; }
 

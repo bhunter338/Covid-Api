@@ -10,7 +10,13 @@ namespace Covid_Api.Controllers
     [ApiController]
     public class CovidDataController : ControllerBase
     {
-        private readonly CovidDataRepo _repo = new CovidDataRepo();
+        private readonly ICovidDataRepo _repo;
+
+        public CovidDataController(ICovidDataRepo repo)
+        {
+            _repo = repo;
+        }
+        // private readonly CovidDataRepo _repo = new CovidDataRepo();
         [HttpGet]
         public ActionResult<TotalData> GetGlobalData()
         {
@@ -18,14 +24,8 @@ namespace Covid_Api.Controllers
             return Ok();
         }
 
-        [HttpGet("{country}")]
-        public ActionResult<TotalData> GetTotalDataByCountry(string country)
-        {
-            var data = _repo.GetTotalData(country);
-            return Ok(data);
-        }
 
-        [HttpGet("{country}/daily")]
+        [HttpGet("{country}")]
         public ActionResult<TotalData> GetDailyTotalDataByCountry(string country)
         {
             var data = _repo.GetDailyTotalData(country);
