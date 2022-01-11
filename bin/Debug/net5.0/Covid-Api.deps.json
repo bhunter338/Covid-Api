@@ -33,6 +33,7 @@
     ".NETCoreApp,Version=v5.0": {
       "Covid-Api/1.0.0": {
         "dependencies": {
+          "HtmlAgilityPack": "1.11.39",
           "Swashbuckle.AspNetCore": "5.6.3",
           "Microsoft.AspNetCore.Antiforgery": "5.0.0.0",
           "Microsoft.AspNetCore.Authentication.Abstractions": "5.0.0.0",
@@ -323,6 +324,17 @@
         },
         "compile": {
           "Covid-Api.dll": {}
+        }
+      },
+      "HtmlAgilityPack/1.11.39": {
+        "runtime": {
+          "lib/netstandard2.0/HtmlAgilityPack.dll": {
+            "assemblyVersion": "1.11.39.0",
+            "fileVersion": "1.11.39.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/HtmlAgilityPack.dll": {}
         }
       },
       "Microsoft.Extensions.ApiDescription.Server/3.0.0": {},
@@ -2089,6 +2101,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "HtmlAgilityPack/1.11.39": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9xk8l+68NaHe3RmfzAOO0A5DcotDO4lAilUnmZpu6h/EpBCfDVrxr7aNClIGK/p3vPiypVzpUCENm72UKfIVjg==",
+      "path": "htmlagilitypack/1.11.39",
+      "hashPath": "htmlagilitypack.1.11.39.nupkg.sha512"
     },
     "Microsoft.Extensions.ApiDescription.Server/3.0.0": {
       "type": "package",

@@ -7,6 +7,7 @@ C:\Users\OnurBilginer\Documents\API\Covid-Api\bin\Debug\net5.0\Covid-Api.runtime
 C:\Users\OnurBilginer\Documents\API\Covid-Api\bin\Debug\net5.0\Covid-Api.dll
 C:\Users\OnurBilginer\Documents\API\Covid-Api\bin\Debug\net5.0\ref\Covid-Api.dll
 C:\Users\OnurBilginer\Documents\API\Covid-Api\bin\Debug\net5.0\Covid-Api.pdb
+C:\Users\OnurBilginer\Documents\API\Covid-Api\bin\Debug\net5.0\HtmlAgilityPack.dll
 C:\Users\OnurBilginer\Documents\API\Covid-Api\bin\Debug\net5.0\Microsoft.OpenApi.dll
 C:\Users\OnurBilginer\Documents\API\Covid-Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\OnurBilginer\Documents\API\Covid-Api\bin\Debug\net5.0\Swashbuckle.AspNetCore.SwaggerGen.dll
