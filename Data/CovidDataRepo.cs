@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -8,16 +9,48 @@ namespace Covid_Api.Data
 {
     public class CovidDataRepo : ICovidDataRepo
     {
-        public TotalData GetDailyTotalData(string country)
+        public List<string> GetCountries()
         {
+            var data = GetSiteData();
+            List<string> countries = data.AsEnumerable().Select(x => x["Country,Other"].ToString()).Where(i => i != "World").OrderBy(x => x).ToList();
 
+            countries.Insert(0, "World");
 
-            return new TotalData { Name = country, TotalConfirmed = 10, TotalRecovered = 20, TotalDeaths = 40 };
+            return countries;
         }
 
-        public TotalData GetTotalData(string country)
+        public TotalData GetTotalDataByCountry(string country)
         {
+            var data = GetSiteData();
+            var selectedData = data.Select("[Country,Other] = '" + country + "'");
 
+            if (selectedData.Count() == 0)
+            {
+                return null;
+            }
+
+            string name = selectedData.FirstOrDefault().Field<string>("Country,Other").Trim();
+            int totalCases = Int32.Parse(selectedData.FirstOrDefault().Field<string>("TotalCases").Trim().Replace(",", string.Empty));
+            int totalRecovered = Int32.Parse(selectedData.FirstOrDefault().Field<string>("TotalRecovered").Trim().Replace(",", string.Empty));
+            int totaldeaths = Int32.Parse(selectedData.FirstOrDefault().Field<string>("TotalDeaths").Trim().Replace(",", string.Empty));
+            int activeCases = Int32.Parse(selectedData.FirstOrDefault().Field<string>("ActiveCases").Trim().Replace(",", string.Empty));
+            int totalTests = Int32.Parse(selectedData.FirstOrDefault().Field<string>("TotalTests").Trim().Replace(",", string.Empty));
+            int population = Int32.Parse(selectedData.FirstOrDefault().Field<string>("Population").Trim().Replace(",", string.Empty));
+
+            return new TotalData
+            {
+                Name = name,
+                TotalConfirmed = totalCases,
+                TotalRecovered = totalRecovered,
+                TotalDeaths = totaldeaths,
+                ActiveCases = activeCases,
+                TotalTests = totalTests,
+                Population = population
+            };
+        }
+
+        private DataTable GetSiteData()
+        {
             string url = "https://www.worldometers.info/coronavirus/";
             var web = new HtmlWeb();
             var doc = web.Load(url).DocumentNode;
@@ -38,7 +71,20 @@ namespace Covid_Api.Data
 
 
 
-            return new TotalData { TotalConfirmed = 1000, TotalRecovered = 20, TotalDeaths = 40 };
+            var cols = new List<string>() { "TotalCases", "TotalDeaths", "TotalRecovered", "Country,Other", "ActiveCases", "TotalTests", "Population" };
+
+            var dtClone = table.Clone();
+
+            foreach (var col in dtClone.Columns)
+            {
+                if (!cols.Contains(col.ToString()))
+                {
+                    table.Columns.Remove(col.ToString());
+                }
+
+            }
+
+            return table;
         }
     }
 }

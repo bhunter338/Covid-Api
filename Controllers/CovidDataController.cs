@@ -17,19 +17,34 @@ namespace Covid_Api.Controllers
             _repo = repo;
         }
         // private readonly CovidDataRepo _repo = new CovidDataRepo();
-        [HttpGet]
-        public ActionResult<TotalData> GetGlobalData()
+        [HttpGet("countries")]
+        public ActionResult<IEnumerable<string>> GetCountries()
         {
+            var data = _repo.GetCountries();
 
-            return Ok();
+            if (data != null)
+            {
+                return Ok(data);
+            }
+
+            return NotFound();
+
+
         }
 
 
         [HttpGet("{country}")]
         public ActionResult<TotalData> GetDailyTotalDataByCountry(string country)
         {
-            var data = _repo.GetTotalData(country);
-            return Ok(data);
+            var data = _repo.GetTotalDataByCountry(country);
+
+            if (data != null)
+            {
+                return Ok(data);
+            }
+
+            return NotFound();
+
         }
 
     }
