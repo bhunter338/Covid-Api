@@ -26,6 +26,15 @@ namespace Covid_Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+                  {
+                      options.AddPolicy("CorsPolicy",
+                          builder => builder
+                              .AllowAnyMethod()
+                              .AllowCredentials()
+                              .SetIsOriginAllowed((host) => true)
+                              .AllowAnyHeader());
+                  });
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -43,6 +52,8 @@ namespace Covid_Api
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Covid_Api v1"));
             }
+            app.UseCors("CorsPolicy");
+
 
             app.UseHttpsRedirection();
 

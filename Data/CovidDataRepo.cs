@@ -34,8 +34,8 @@ namespace Covid_Api.Data
             int totalRecovered = Int32.Parse(selectedData.FirstOrDefault().Field<string>("TotalRecovered").Trim().Replace(",", string.Empty));
             int totaldeaths = Int32.Parse(selectedData.FirstOrDefault().Field<string>("TotalDeaths").Trim().Replace(",", string.Empty));
             int activeCases = Int32.Parse(selectedData.FirstOrDefault().Field<string>("ActiveCases").Trim().Replace(",", string.Empty));
-            int totalTests = Int32.Parse(selectedData.FirstOrDefault().Field<string>("TotalTests").Trim().Replace(",", string.Empty));
-            int population = Int32.Parse(selectedData.FirstOrDefault().Field<string>("Population").Trim().Replace(",", string.Empty));
+            int serious = Int32.Parse(selectedData.FirstOrDefault().Field<string>("Serious,Critical").Trim().Replace(",", string.Empty));
+            int casesPer = Int32.Parse(selectedData.FirstOrDefault().Field<string>("Tot&nbsp;Cases/1M pop").Trim().Replace(",", string.Empty));
 
             return new TotalData
             {
@@ -44,8 +44,8 @@ namespace Covid_Api.Data
                 TotalRecovered = totalRecovered,
                 TotalDeaths = totaldeaths,
                 ActiveCases = activeCases,
-                TotalTests = totalTests,
-                Population = population
+                CasesPer1MPopulation = casesPer,
+                Serious = serious
             };
         }
 
@@ -71,7 +71,7 @@ namespace Covid_Api.Data
 
 
 
-            var cols = new List<string>() { "TotalCases", "TotalDeaths", "TotalRecovered", "Country,Other", "ActiveCases", "TotalTests", "Population" };
+            var cols = new List<string>() { "TotalCases", "TotalDeaths", "TotalRecovered", "Country,Other", "ActiveCases", "Serious,Critical", "Tot&nbsp;Cases/1M pop" };
 
             var dtClone = table.Clone();
 
