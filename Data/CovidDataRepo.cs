@@ -29,13 +29,20 @@ namespace Covid_Api.Data
                 return null;
             }
 
+            int totalCases = 0;
+            int totalRecovered = 0;
+            int totaldeaths = 0;
+            int activeCases = 0;
+            int serious = 0;
+            int casesPer = 0;
+
             string name = selectedData.FirstOrDefault().Field<string>("Country,Other").Trim();
-            int totalCases = Int32.Parse(selectedData.FirstOrDefault().Field<string>("TotalCases").Trim().Replace(",", string.Empty));
-            int totalRecovered = Int32.Parse(selectedData.FirstOrDefault().Field<string>("TotalRecovered").Trim().Replace(",", string.Empty));
-            int totaldeaths = Int32.Parse(selectedData.FirstOrDefault().Field<string>("TotalDeaths").Trim().Replace(",", string.Empty));
-            int activeCases = Int32.Parse(selectedData.FirstOrDefault().Field<string>("ActiveCases").Trim().Replace(",", string.Empty));
-            int serious = Int32.Parse(selectedData.FirstOrDefault().Field<string>("Serious,Critical").Trim().Replace(",", string.Empty));
-            int casesPer = Int32.Parse(selectedData.FirstOrDefault().Field<string>("Tot&nbsp;Cases/1M pop").Trim().Replace(",", string.Empty));
+            Int32.TryParse(selectedData.FirstOrDefault().Field<string>("TotalCases").Trim().Replace(",", string.Empty), out totalCases);
+            Int32.TryParse(selectedData.FirstOrDefault().Field<string>("TotalRecovered").Trim().Replace(",", string.Empty), out totalRecovered);
+            Int32.TryParse(selectedData.FirstOrDefault().Field<string>("TotalDeaths").Trim().Replace(",", string.Empty), out totaldeaths);
+            Int32.TryParse(selectedData.FirstOrDefault().Field<string>("ActiveCases").Trim().Replace(",", string.Empty), out activeCases);
+            Int32.TryParse(selectedData.FirstOrDefault().Field<string>("Serious,Critical").Trim().Replace(",", string.Empty), out serious);
+            Int32.TryParse(selectedData.FirstOrDefault().Field<string>("Tot&nbsp;Cases/1M pop").Trim().Replace(",", string.Empty), out casesPer);
 
             return new TotalData
             {
