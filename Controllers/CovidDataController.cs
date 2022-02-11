@@ -34,7 +34,7 @@ namespace Covid_Api.Controllers
 
 
         [HttpGet("{country}")]
-        public ActionResult<TotalData> GetDailyTotalDataByCountry(string country)
+        public ActionResult<DailyData> GetDailyTotalDataByCountry(string country)
         {
             var data = _repo.GetTotalDataByCountry(country);
 

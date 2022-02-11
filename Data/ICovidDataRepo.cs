@@ -5,7 +5,7 @@ namespace Covid_Api.Data
 {
     public interface ICovidDataRepo
     {
-        TotalData GetTotalDataByCountry(string country);
+        DailyData GetTotalDataByCountry(string country);
         List<string> GetCountries();
 
 

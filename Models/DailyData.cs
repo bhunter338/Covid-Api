@@ -1,8 +1,14 @@
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Covid_Api.Models
 {
-    public class TotalData
+    public class DailyData
     {
-        public string Name { get; set; }
+        public int Id { get; set; }
+        public string CountryName { get; set; }
+
+        public int date { get; set; }
         public int TotalConfirmed { get; set; }
         public int TotalRecovered { get; set; }
 

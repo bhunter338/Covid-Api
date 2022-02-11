@@ -19,7 +19,7 @@ namespace Covid_Api.Data
             return countries;
         }
 
-        public TotalData GetTotalDataByCountry(string country)
+        public DailyData GetTotalDataByCountry(string country)
         {
             var data = GetSiteData();
             var selectedData = data.Select("[Country,Other] = '" + country + "'");
@@ -44,9 +44,9 @@ namespace Covid_Api.Data
             Int32.TryParse(selectedData.FirstOrDefault().Field<string>("Serious,Critical").Trim().Replace(",", string.Empty), out serious);
             Int32.TryParse(selectedData.FirstOrDefault().Field<string>("Tot&nbsp;Cases/1M pop").Trim().Replace(",", string.Empty), out casesPer);
 
-            return new TotalData
+            return new DailyData
             {
-                Name = name,
+                CountryName = name,
                 TotalConfirmed = totalCases,
                 TotalRecovered = totalRecovered,
                 TotalDeaths = totaldeaths,
