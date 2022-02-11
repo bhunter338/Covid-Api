@@ -16,7 +16,9 @@ namespace Covid_Api.Data
         }
         public List<string> GetCountries()
         {
-            return _context.countries.Select(i => i.Name).ToList();
+            var result = _context.countries.Select(i => i.Name).OrderBy(x => x).ToList();
+            result.Insert(0, "World");
+            return result;
         }
 
         public DailyData GetTotalDataByCountry(string country)

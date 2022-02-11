@@ -9,12 +9,26 @@ namespace Covid_Api.Data
 {
     public class CovidDataRepo : ICovidDataRepo
     {
+        private readonly CovidAppContext _context;
+
+        public CovidDataRepo(CovidAppContext context)
+        {
+            _context = context;
+        }
         public List<string> GetCountries()
         {
             var data = GetSiteData();
             List<string> countries = data.AsEnumerable().Select(x => x["Country,Other"].ToString()).Where(i => i != "World").OrderBy(x => x).ToList();
 
             countries.Insert(0, "World");
+
+            // foreach (var country in countries)
+            // {
+            //     _context.countries.Add(new Country { Name = country });
+            // }
+
+            // _context.SaveChanges();
+
 
             return countries;
         }
