@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Covid_Api.Data;
+using Covid_Api.ScheduledTask;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -40,6 +41,11 @@ namespace Covid_Api
             services.AddDbContext<CovidAppContext>(opt => opt.UseSqlite("DataSource = CovidApi.db "));
 
             services.AddControllers();
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddSingleton<IHostedService, InsertService>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Covid_Api", Version = "v1" });

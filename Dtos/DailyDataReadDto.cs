@@ -1,9 +1,6 @@
-using System;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Covid_Api.Models
+namespace Covid_Api.Dtos
 {
-    public class DailyData
+    public class DailyDataReadDto
     {
         public int Id { get; set; }
         public string CountryName { get; set; }
@@ -17,8 +14,6 @@ namespace Covid_Api.Models
         public int Serious { get; set; }
 
         public int CasesPer1MPopulation { get; set; }
-
-        public string CreateDate { get; set; }
 
     }
 }
