@@ -52,6 +52,7 @@ namespace Covid_Api
             });
             // services.AddScoped<ICovidDataRepo, CovidDataRepo>();
             services.AddScoped<ICovidDataRepo, SqlCovidRepo>();
+            // services.AddScoped<IServiceProvider, ServiceProvider>();
 
         }
 

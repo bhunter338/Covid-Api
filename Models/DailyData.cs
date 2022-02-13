@@ -19,6 +19,7 @@ namespace Covid_Api.Models
         public int CasesPer1MPopulation { get; set; }
 
         public string CreateDate { get; set; }
+        public string UpdateDate { get; set; }
 
     }
 }
