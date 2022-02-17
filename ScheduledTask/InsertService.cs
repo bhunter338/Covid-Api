@@ -26,70 +26,89 @@ namespace Covid_Api.ScheduledTask
         {
             while (!cToken.IsCancellationRequested)
             {
-                int now = 0;
-                Int32.TryParse(DateTime.Now.ToString("yyyyMMdd"), out now);
-
-                Console.WriteLine($"{DateTime.Now.ToString()}\n");
-
-                var data = GetSiteData();
-
-                using (var scope = _serviceProvider.CreateScope()) // this will use `IServiceScopeFactory` internally
-                {
-                    var context = scope.ServiceProvider.GetService<CovidAppContext>();
-
-                    foreach (DataRow row in data.Rows)
-                    {
-                        var entity = context.dailyDatas.Where(p => p.CountryName == row.Field<string>("Country,Other").ToString() && p.date == now);
-                        int count = entity.Count();
-
-                        int totalCases, totalRecovered, totaldeaths, activeCases, serious, casesPer = 0;
-
-                        string name = row.Field<string>("Country,Other").Trim();
-                        Int32.TryParse(row.Field<string>("TotalCases").Trim().Replace(",", string.Empty), out totalCases);
-                        Int32.TryParse(row.Field<string>("TotalRecovered").Trim().Replace(",", string.Empty), out totalRecovered);
-                        Int32.TryParse(row.Field<string>("TotalDeaths").Trim().Replace(",", string.Empty), out totaldeaths);
-                        Int32.TryParse(row.Field<string>("ActiveCases").Trim().Replace(",", string.Empty), out activeCases);
-                        Int32.TryParse(row.Field<string>("Serious,Critical").Trim().Replace(",", string.Empty), out serious);
-                        Int32.TryParse(row.Field<string>("Tot&nbsp;Cases/1M pop").Trim().Replace(",", string.Empty), out casesPer);
-
-                        if (count == 0) //no data inserted today. insert
-                        {
-                            DailyData dailyData = new DailyData
-                            {
-                                CountryName = name,
-                                TotalConfirmed = totalCases,
-                                TotalRecovered = totalRecovered,
-                                TotalDeaths = totaldeaths,
-                                ActiveCases = activeCases,
-                                Serious = serious,
-                                CasesPer1MPopulation = casesPer,
-                                date = now,
-                                CreateDate = DateTime.Now.ToString("yyyyMMddHHmm")
-                            };
-
-                            context.dailyDatas.Add(dailyData);
-
-                        }
-                        else // update 
-                        {
-                            var updateEntity = entity.FirstOrDefault();
-                            if (updateEntity != null)
-                            {
-                                updateEntity.TotalConfirmed = totalCases;
-                                updateEntity.TotalRecovered = totalRecovered;
-                                updateEntity.TotalDeaths = totaldeaths;
-                                updateEntity.ActiveCases = activeCases;
-                                updateEntity.Serious = serious;
-                                updateEntity.CasesPer1MPopulation = casesPer;
-                                updateEntity.UpdateDate = DateTime.Now.ToString("yyyyMMddHHmm");
-                            }
-
-                        }
-                    }
-                    context.SaveChanges();
-                }
+                DataInsertUpdate();
+                DeleteOldData();
 
                 await Task.Delay(TimeSpan.FromMinutes(30), cToken);
+            }
+        }
+
+        private void DeleteOldData()
+        {
+            int date;
+            Int32.TryParse(DateTime.Now.AddDays(-31).ToString("yyyyMMdd"), out date);
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetService<CovidAppContext>();
+                List<DailyData> entitiesToRemove = context.dailyDatas.Where(i => i.date < date).ToList();
+                context.dailyDatas.RemoveRange(entitiesToRemove);
+                context.SaveChanges();
+            }
+
+        }
+
+        private void DataInsertUpdate()
+        {
+            int now = 0;
+            Int32.TryParse(DateTime.Now.ToString("yyyyMMdd"), out now);
+
+
+            var data = GetSiteData();
+
+            using (var scope = _serviceProvider.CreateScope()) // this will use `IServiceScopeFactory` internally
+            {
+                var context = scope.ServiceProvider.GetService<CovidAppContext>();
+
+                foreach (DataRow row in data.Rows)
+                {
+                    var entity = context.dailyDatas.Where(p => p.CountryName == row.Field<string>("Country,Other").ToString() && p.date == now);
+                    int count = entity.Count();
+
+                    int totalCases, totalRecovered, totaldeaths, activeCases, serious, casesPer = 0;
+
+                    string name = row.Field<string>("Country,Other").Trim();
+                    Int32.TryParse(row.Field<string>("TotalCases").Trim().Replace(",", string.Empty), out totalCases);
+                    Int32.TryParse(row.Field<string>("TotalRecovered").Trim().Replace(",", string.Empty), out totalRecovered);
+                    Int32.TryParse(row.Field<string>("TotalDeaths").Trim().Replace(",", string.Empty), out totaldeaths);
+                    Int32.TryParse(row.Field<string>("ActiveCases").Trim().Replace(",", string.Empty), out activeCases);
+                    Int32.TryParse(row.Field<string>("Serious,Critical").Trim().Replace(",", string.Empty), out serious);
+                    Int32.TryParse(row.Field<string>("Tot&nbsp;Cases/1M pop").Trim().Replace(",", string.Empty), out casesPer);
+
+                    if (count == 0) //no data inserted today. insert
+                    {
+                        DailyData dailyData = new DailyData
+                        {
+                            CountryName = name,
+                            TotalConfirmed = totalCases,
+                            TotalRecovered = totalRecovered,
+                            TotalDeaths = totaldeaths,
+                            ActiveCases = activeCases,
+                            Serious = serious,
+                            CasesPer1MPopulation = casesPer,
+                            date = now,
+                            CreateDate = DateTime.Now.ToString("yyyyMMddHHmm")
+                        };
+
+                        context.dailyDatas.Add(dailyData);
+
+                    }
+                    else // update 
+                    {
+                        var updateEntity = entity.FirstOrDefault();
+                        if (updateEntity != null)
+                        {
+                            updateEntity.TotalConfirmed = totalCases;
+                            updateEntity.TotalRecovered = totalRecovered;
+                            updateEntity.TotalDeaths = totaldeaths;
+                            updateEntity.ActiveCases = activeCases;
+                            updateEntity.Serious = serious;
+                            updateEntity.CasesPer1MPopulation = casesPer;
+                            updateEntity.UpdateDate = DateTime.Now.ToString("yyyyMMddHHmm");
+                        }
+
+                    }
+                }
+                context.SaveChanges();
             }
         }
 
