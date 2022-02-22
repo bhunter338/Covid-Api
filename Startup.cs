@@ -19,12 +19,15 @@ namespace Covid_Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         public IConfiguration Configuration { get; }
+
+        private readonly IWebHostEnvironment _env;
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -38,7 +41,9 @@ namespace Covid_Api
                               .AllowAnyHeader());
                   });
 
-            services.AddDbContext<CovidAppContext>(opt => opt.UseSqlite("DataSource = CovidApi.db "));
+            Console.WriteLine(_env.ContentRootPath);
+
+            services.AddDbContext<CovidAppContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CovidDbConnection")));
 
             services.AddControllers();
 

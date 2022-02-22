@@ -23,10 +23,9 @@ namespace Covid_Api.Data
 
         public DailyData GetTotalDataByCountry(string country)
         {
-            int now = 0;
-            Int32.TryParse(DateTime.Now.ToString("yyyyMMdd"), out now);
 
-            return _context.dailyDatas.FirstOrDefault(p => p.CountryName == country && p.date == now);
+
+            return _context.dailyDatas.Where(p => p.CountryName == country).OrderByDescending(i => i.date).FirstOrDefault();
         }
     }
 }

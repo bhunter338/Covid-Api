@@ -8,7 +8,8 @@ namespace Covid_Api.Models
         public int Id { get; set; }
         public string CountryName { get; set; }
 
-        public int date { get; set; }
+        [Column(TypeName = "date")]
+        public DateTime date { get; set; }
         public int TotalConfirmed { get; set; }
         public int TotalRecovered { get; set; }
 
@@ -18,8 +19,8 @@ namespace Covid_Api.Models
 
         public int CasesPer1MPopulation { get; set; }
 
-        public string CreateDate { get; set; }
-        public string UpdateDate { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime? UpdateDate { get; set; }
 
     }
 }

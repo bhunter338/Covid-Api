@@ -35,8 +35,8 @@ namespace Covid_Api.ScheduledTask
 
         private void DeleteOldData()
         {
-            int date;
-            Int32.TryParse(DateTime.Now.AddDays(-31).ToString("yyyyMMdd"), out date);
+            DateTime date = DateTime.Now.AddDays(-31).Date;
+
             using (var scope = _serviceProvider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetService<CovidAppContext>();
@@ -49,8 +49,7 @@ namespace Covid_Api.ScheduledTask
 
         private void DataInsertUpdate()
         {
-            int now = 0;
-            Int32.TryParse(DateTime.Now.ToString("yyyyMMdd"), out now);
+            DateTime now = DateTime.Now.Date;
 
 
             var data = GetSiteData();
@@ -59,9 +58,14 @@ namespace Covid_Api.ScheduledTask
             {
                 var context = scope.ServiceProvider.GetService<CovidAppContext>();
 
+                int i = 0;
+
+                var entities = context.dailyDatas.ToList();
                 foreach (DataRow row in data.Rows)
                 {
-                    var entity = context.dailyDatas.Where(p => p.CountryName == row.Field<string>("Country,Other").ToString() && p.date == now);
+                    Console.WriteLine(i);
+                    i++;
+                    var entity = entities.Where(p => p.CountryName == row.Field<string>("Country,Other").ToString() && p.date == now);
                     int count = entity.Count();
 
                     int totalCases, totalRecovered, totaldeaths, activeCases, serious, casesPer = 0;
@@ -86,7 +90,7 @@ namespace Covid_Api.ScheduledTask
                             Serious = serious,
                             CasesPer1MPopulation = casesPer,
                             date = now,
-                            CreateDate = DateTime.Now.ToString("yyyyMMddHHmm")
+                            CreateDate = DateTime.Now
                         };
 
                         context.dailyDatas.Add(dailyData);
@@ -103,7 +107,7 @@ namespace Covid_Api.ScheduledTask
                             updateEntity.ActiveCases = activeCases;
                             updateEntity.Serious = serious;
                             updateEntity.CasesPer1MPopulation = casesPer;
-                            updateEntity.UpdateDate = DateTime.Now.ToString("yyyyMMddHHmm");
+                            updateEntity.UpdateDate = DateTime.Now;
                         }
 
                     }

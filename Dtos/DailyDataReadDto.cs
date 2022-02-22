@@ -1,3 +1,5 @@
+using System;
+
 namespace Covid_Api.Dtos
 {
     public class DailyDataReadDto
@@ -5,7 +7,7 @@ namespace Covid_Api.Dtos
         public int Id { get; set; }
         public string CountryName { get; set; }
 
-        public int date { get; set; }
+        public DateTime date { get; set; }
         public int TotalConfirmed { get; set; }
         public int TotalRecovered { get; set; }
 

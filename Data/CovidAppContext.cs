@@ -7,7 +7,7 @@ namespace Covid_Api.Data
     {
         public CovidAppContext(DbContextOptions<CovidAppContext> opt) : base(opt)
         {
-
+            // Database.EnsureCreated();
         }
         public DbSet<DailyData> dailyDatas { get; set; }
 
