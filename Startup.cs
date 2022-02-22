@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,9 +42,12 @@ namespace Covid_Api
                               .AllowAnyHeader());
                   });
 
-            Console.WriteLine(_env.ContentRootPath);
 
-            services.AddDbContext<CovidAppContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("CovidDbConnection")));
+            var conStrBuilder = new SqlConnectionStringBuilder(Configuration.GetConnectionString("CovidDbConnection"));
+            conStrBuilder.UserID = Configuration["CovidDb:SqlServerUsername"];
+            conStrBuilder.Password = Configuration["CovidDb:SqlServerPassword"];
+
+            services.AddDbContext<CovidAppContext>(opt => opt.UseSqlServer(conStrBuilder.ConnectionString));
 
             services.AddControllers();
 

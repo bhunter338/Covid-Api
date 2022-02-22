@@ -51,5 +51,17 @@ namespace Covid_Api.Controllers
 
         }
 
+        [HttpGet("historical/{country}")]
+        public ActionResult<List<DailyDataReadDto>> GetHistoricalData(string country)
+        {
+            var data = _repo.GetHistroicalDataByCountry(country);
+
+            if (data != null)
+            {
+                return Ok(_mapper.Map<List<DailyDataReadDto>>(data));
+            }
+            return NotFound();
+        }
+
     }
 }

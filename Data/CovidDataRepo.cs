@@ -33,6 +33,11 @@ namespace Covid_Api.Data
             return countries;
         }
 
+        public List<DailyData> GetHistroicalDataByCountry(string country)
+        {
+            throw new NotImplementedException();
+        }
+
         public DailyData GetTotalDataByCountry(string country)
         {
             var data = GetSiteData();

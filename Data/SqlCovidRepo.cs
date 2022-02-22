@@ -21,6 +21,11 @@ namespace Covid_Api.Data
             return result;
         }
 
+        public List<DailyData> GetHistroicalDataByCountry(string country)
+        {
+            return _context.dailyDatas.Where(p => p.CountryName == country).OrderBy(i => i.date).ToList();
+        }
+
         public DailyData GetTotalDataByCountry(string country)
         {
 
