@@ -44,8 +44,8 @@ namespace Covid_Api
 
 
             var conStrBuilder = new SqlConnectionStringBuilder(Configuration.GetConnectionString("CovidDbConnection"));
-            conStrBuilder.UserID = Configuration["CovidDb:SqlServerUsername"];
-            conStrBuilder.Password = Configuration["CovidDb:SqlServerPassword"];
+            // conStrBuilder.UserID = Configuration["CovidDb:SqlServerUsername"];
+            // conStrBuilder.Password = Configuration["CovidDb:SqlServerPassword"];
 
             services.AddDbContext<CovidAppContext>(opt => opt.UseSqlServer(conStrBuilder.ConnectionString));
 
