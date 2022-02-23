@@ -12,6 +12,8 @@ namespace Covid_Api.Data
         public DbSet<DailyData> dailyDatas { get; set; }
 
         public DbSet<Country> countries { get; set; }
+
+        public DbSet<Log> logs { get; set; }
     }
 
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Covid_Api.Data;
+using Covid_Api.Methods;
+using Covid_Api.Models;
 using Covid_Api.ScheduledTask;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,14 +26,17 @@ namespace Covid_Api
         {
             Configuration = configuration;
             _env = env;
+            // _context = context;
         }
 
         public IConfiguration Configuration { get; }
 
         private readonly IWebHostEnvironment _env;
+        // private readonly CovidAppContext _context;
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // AppMethods.LogDb(new Log() { Message = "Configure Services ", Exception = string.Empty, Date = DateTime.Now }, _context);
             services.AddCors(options =>
                   {
                       options.AddPolicy("CorsPolicy",

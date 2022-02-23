@@ -9,6 +9,7 @@ using Covid_Api.Data;
 using Covid_Api.Models;
 using HtmlAgilityPack;
 using Microsoft.Extensions.DependencyInjection;
+using Covid_Api.Methods;
 
 namespace Covid_Api.ScheduledTask
 {
@@ -17,7 +18,7 @@ namespace Covid_Api.ScheduledTask
         HttpClient restClient;
         private readonly IServiceProvider _serviceProvider;
 
-        public InsertService(IServiceProvider serviceProvider)
+        public InsertService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
             restClient = new HttpClient();
             _serviceProvider = serviceProvider;
@@ -31,91 +32,150 @@ namespace Covid_Api.ScheduledTask
 
                 await Task.Delay(TimeSpan.FromMinutes(30), cToken);
             }
-        }
-
-        private void DeleteOldData()
-        {
-            DateTime date = DateTime.Now.AddDays(-31).Date;
 
             using (var scope = _serviceProvider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetService<CovidAppContext>();
-                List<DailyData> entitiesToRemove = context.dailyDatas.Where(i => i.date < date).ToList();
-                context.dailyDatas.RemoveRange(entitiesToRemove);
-                context.SaveChanges();
+                AppMethods.LogDb(new Log() { Message = "Cancellation Requested", Exception = string.Empty, Date = DateTime.Now }, context);
+
             }
+
+        }
+
+        private void DeleteOldData()
+        {
+            try
+            {
+                DateTime date = DateTime.Now.AddDays(-31).Date;
+                DateTime days10 = DateTime.Now.AddDays(-10).Date;
+
+
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var context = scope.ServiceProvider.GetService<CovidAppContext>();
+                    List<DailyData> entitiesToRemove = context.dailyDatas.Where(i => i.date < date).ToList();
+                    context.dailyDatas.RemoveRange(entitiesToRemove);
+
+                    List<Log> logsToRemove = context.logs.Where(i => i.Date < days10).ToList();
+                    context.dailyDatas.RemoveRange(entitiesToRemove);
+
+
+                    context.SaveChanges();
+                    AppMethods.LogDb(new Log() { Message = "DeleteOldData method executed Successfully", Exception = string.Empty, Date = DateTime.Now }, context);
+
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var context = scope.ServiceProvider.GetService<CovidAppContext>();
+                    AppMethods.LogDb(new Log() { Message = "Error on DeleteOldData method", Exception = ex.ToString(), Date = DateTime.Now }, context);
+                }
+
+
+
+            }
+
 
         }
 
         private void DataInsertUpdate()
         {
-            DateTime now = DateTime.Now.Date;
-
-
-            var data = GetSiteData();
-
-            using (var scope = _serviceProvider.CreateScope()) // this will use `IServiceScopeFactory` internally
+            try
             {
-                var context = scope.ServiceProvider.GetService<CovidAppContext>();
+                DateTime now = DateTime.Now.Date;
 
-                int i = 0;
 
-                var entities = context.dailyDatas.ToList();
-                foreach (DataRow row in data.Rows)
+                var data = GetSiteData();
+
+                using (var scope = _serviceProvider.CreateScope()) // this will use `IServiceScopeFactory` internally
                 {
-                    Console.WriteLine(i);
-                    i++;
-                    var entity = entities.Where(p => p.CountryName == row.Field<string>("Country,Other").ToString() && p.date == now);
-                    int count = entity.Count();
+                    var context = scope.ServiceProvider.GetService<CovidAppContext>();
 
-                    int totalCases, totalRecovered, totaldeaths, activeCases, serious, casesPer = 0;
+                    int i = 0;
 
-                    string name = row.Field<string>("Country,Other").Trim();
-                    Int32.TryParse(row.Field<string>("TotalCases").Trim().Replace(",", string.Empty), out totalCases);
-                    Int32.TryParse(row.Field<string>("TotalRecovered").Trim().Replace(",", string.Empty), out totalRecovered);
-                    Int32.TryParse(row.Field<string>("TotalDeaths").Trim().Replace(",", string.Empty), out totaldeaths);
-                    Int32.TryParse(row.Field<string>("ActiveCases").Trim().Replace(",", string.Empty), out activeCases);
-                    Int32.TryParse(row.Field<string>("Serious,Critical").Trim().Replace(",", string.Empty), out serious);
-                    Int32.TryParse(row.Field<string>("Tot&nbsp;Cases/1M pop").Trim().Replace(",", string.Empty), out casesPer);
-
-                    if (count == 0) //no data inserted today. insert
+                    var entities = context.dailyDatas.ToList();
+                    foreach (DataRow row in data.Rows)
                     {
-                        DailyData dailyData = new DailyData
-                        {
-                            CountryName = name,
-                            TotalConfirmed = totalCases,
-                            TotalRecovered = totalRecovered,
-                            TotalDeaths = totaldeaths,
-                            ActiveCases = activeCases,
-                            Serious = serious,
-                            CasesPer1MPopulation = casesPer,
-                            date = now,
-                            CreateDate = DateTime.Now
-                        };
+                        Console.WriteLine(i);
+                        i++;
+                        var entity = entities.Where(p => p.CountryName == row.Field<string>("Country,Other").ToString() && p.date == now);
+                        int count = entity.Count();
 
-                        context.dailyDatas.Add(dailyData);
+                        int totalCases, totalRecovered, totaldeaths, activeCases, serious, casesPer = 0;
 
-                    }
-                    else // update 
-                    {
-                        var updateEntity = entity.FirstOrDefault();
-                        if (updateEntity != null)
+                        string name = row.Field<string>("Country,Other").Trim();
+                        Int32.TryParse(row.Field<string>("TotalCases").Trim().Replace(",", string.Empty), out totalCases);
+                        Int32.TryParse(row.Field<string>("TotalRecovered").Trim().Replace(",", string.Empty), out totalRecovered);
+                        Int32.TryParse(row.Field<string>("TotalDeaths").Trim().Replace(",", string.Empty), out totaldeaths);
+                        Int32.TryParse(row.Field<string>("ActiveCases").Trim().Replace(",", string.Empty), out activeCases);
+                        Int32.TryParse(row.Field<string>("Serious,Critical").Trim().Replace(",", string.Empty), out serious);
+                        Int32.TryParse(row.Field<string>("Tot&nbsp;Cases/1M pop").Trim().Replace(",", string.Empty), out casesPer);
+
+                        if (count == 0) //no data inserted today. insert
                         {
-                            updateEntity.TotalConfirmed = totalCases;
-                            updateEntity.TotalRecovered = totalRecovered;
-                            updateEntity.TotalDeaths = totaldeaths;
-                            updateEntity.ActiveCases = activeCases;
-                            updateEntity.Serious = serious;
-                            updateEntity.CasesPer1MPopulation = casesPer;
-                            updateEntity.UpdateDate = DateTime.Now;
+                            DailyData dailyData = new DailyData
+                            {
+                                CountryName = name,
+                                TotalConfirmed = totalCases,
+                                TotalRecovered = totalRecovered,
+                                TotalDeaths = totaldeaths,
+                                ActiveCases = activeCases,
+                                Serious = serious,
+                                CasesPer1MPopulation = casesPer,
+                                date = now,
+                                CreateDate = DateTime.Now
+                            };
+
+                            context.dailyDatas.Add(dailyData);
+
                         }
+                        else // update 
+                        {
+                            var updateEntity = entity.FirstOrDefault();
+                            if (updateEntity != null)
+                            {
+                                updateEntity.TotalConfirmed = totalCases;
+                                updateEntity.TotalRecovered = totalRecovered;
+                                updateEntity.TotalDeaths = totaldeaths;
+                                updateEntity.ActiveCases = activeCases;
+                                updateEntity.Serious = serious;
+                                updateEntity.CasesPer1MPopulation = casesPer;
+                                updateEntity.UpdateDate = DateTime.Now;
+                            }
 
+                        }
                     }
+                    context.SaveChanges();
+                    AppMethods.LogDb(new Log() { Message = "DataInsertUpdate method successfully executed", Exception = string.Empty, Date = DateTime.Now }, context);
                 }
-                context.SaveChanges();
             }
+            catch (Exception ex)
+            {
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var context = scope.ServiceProvider.GetService<CovidAppContext>();
+                    AppMethods.LogDb(new Log() { Message = "Error on DataInsertUpdate method", Exception = ex.ToString(), Date = DateTime.Now }, context);
+                }
+            }
+
+
         }
 
+
+        // public void LogDb(Log log)
+        // {
+        //     using (var scope = _serviceProvider.CreateScope())
+        //     {
+        //         var context = scope.ServiceProvider.GetService<CovidAppContext>();
+        //         context.logs.Add(log);
+        //         context.SaveChanges();
+        //     }
+
+        // }
         private DataTable GetSiteData()
         {
             string url = "https://www.worldometers.info/coronavirus/";
