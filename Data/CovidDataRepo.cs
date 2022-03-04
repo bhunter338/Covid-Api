@@ -9,6 +9,12 @@ namespace Covid_Api.Data
 {
     public class CovidDataRepo : ICovidDataRepo
     {
+        private readonly CovidAppContext _context;
+
+        public CovidDataRepo(CovidAppContext context)
+        {
+            _context = context;
+        }
         public List<string> GetCountries()
         {
             var data = GetSiteData();
@@ -16,10 +22,23 @@ namespace Covid_Api.Data
 
             countries.Insert(0, "World");
 
+            // foreach (var country in countries)
+            // {
+            //     _context.countries.Add(new Country { Name = country });
+            // }
+
+            // _context.SaveChanges();
+
+
             return countries;
         }
 
-        public TotalData GetTotalDataByCountry(string country)
+        public List<DailyData> GetHistroicalDataByCountry(string country)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DailyData GetTotalDataByCountry(string country)
         {
             var data = GetSiteData();
             var selectedData = data.Select("[Country,Other] = '" + country + "'");
@@ -44,9 +63,9 @@ namespace Covid_Api.Data
             Int32.TryParse(selectedData.FirstOrDefault().Field<string>("Serious,Critical").Trim().Replace(",", string.Empty), out serious);
             Int32.TryParse(selectedData.FirstOrDefault().Field<string>("Tot&nbsp;Cases/1M pop").Trim().Replace(",", string.Empty), out casesPer);
 
-            return new TotalData
+            return new DailyData
             {
-                Name = name,
+                CountryName = name,
                 TotalConfirmed = totalCases,
                 TotalRecovered = totalRecovered,
                 TotalDeaths = totaldeaths,

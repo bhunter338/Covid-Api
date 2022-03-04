@@ -1,8 +1,13 @@
-namespace Covid_Api.Models
+using System;
+
+namespace Covid_Api.Dtos
 {
-    public class TotalData
+    public class DailyDataReadDto
     {
-        public string Name { get; set; }
+        public int Id { get; set; }
+        public string CountryName { get; set; }
+
+        public DateTime date { get; set; }
         public int TotalConfirmed { get; set; }
         public int TotalRecovered { get; set; }
 

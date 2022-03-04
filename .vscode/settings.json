@@ -1,0 +1,4 @@
+{
+  "appService.deploySubpath": "publish",
+  "appService.defaultWebAppToDeploy": "/subscriptions/974cde04-d976-4444-852a-cac2d7b94193/resourceGroups/covid19data/providers/Microsoft.Web/sites/covid19data"
+}
