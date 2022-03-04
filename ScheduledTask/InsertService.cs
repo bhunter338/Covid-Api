@@ -102,7 +102,9 @@ namespace Covid_Api.ScheduledTask
                     {
                         Console.WriteLine(i);
                         i++;
-                        var entity = entities.Where(p => p.CountryName == row.Field<string>("Country,Other").ToString() && p.date == now);
+
+
+                        var entity = entities.Where(p => p.CountryName == row.Field<string>("Country,Other").ToString().Trim() && p.date == now);
                         int count = entity.Count();
 
                         int totalCases, totalRecovered, totaldeaths, activeCases, serious, casesPer = 0;
@@ -114,6 +116,7 @@ namespace Covid_Api.ScheduledTask
                         Int32.TryParse(row.Field<string>("ActiveCases").Trim().Replace(",", string.Empty), out activeCases);
                         Int32.TryParse(row.Field<string>("Serious,Critical").Trim().Replace(",", string.Empty), out serious);
                         Int32.TryParse(row.Field<string>("Tot&nbsp;Cases/1M pop").Trim().Replace(",", string.Empty), out casesPer);
+
 
                         if (count == 0) //no data inserted today. insert
                         {
