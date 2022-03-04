@@ -2,7 +2,7 @@
 
 Data scraped from https://www.worldometers.info/coronavirus/
 
-URI: https://covid19dataapi.herokuapp.com/
+URI: https://covid19globaldata.azurewebsites.net
 
 ## Endpoints
 
